@@ -1,0 +1,58 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Socket.IO Heatmap</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font: 13px Helvetica, Arial; }
+      .heatmap {
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Heatmap test</h1>
+    <div style="height:600px;"><div class="heatmap" id="map-canvas"></div></div>
+
+  <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+  <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+  <script src="js/heatmap.min.js"></script>
+  <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
+  <script src="js/gmaps-heatmap.js"></script>
+
+  <script>
+  window.onload = function() {
+
+    var myLatlng = new google.maps.LatLng(52.106359, 5.389157);
+    var myOptions = {
+      zoom: 7,
+      center: myLatlng
+    };    
+
+    // standard map
+    map = new google.maps.Map(document.getElementById("map-canvas"), myOptions);    
+
+    // heatmap layer
+    heatmap = new HeatmapOverlay(map, 
+      {
+        "radius": 0.2,
+        "maxOpacity": 1, 
+        "scaleRadius": true, 
+        "useLocalExtrema": true,
+        latField: 'lat',
+        lngField: 'lng',
+        valueField: 'count'
+      }
+    );    
+
+    var socket = io();
+    socket.on('heatmap data', function(data){
+      heatmap.setData(data);
+    });
+
+  }
+  </script>
+
+  </body>
+</html>
